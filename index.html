@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>星光公主魔法拼圖 - 鍵盤拼音與直式注音版</title>
+    <title>星光公主魔法拼圖 - 鍵盤拼音與直式注音標準版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500;700&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
@@ -108,7 +108,7 @@
             cursor: grabbing;
         }
         .piece-in-inventory {
-            width: 110px;
+            width: 100px;
             filter: drop-shadow(0 6px 10px rgba(0,0,0,0.15));
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
@@ -161,6 +161,7 @@
             background: rgba(255, 255, 255, 0.9);
             transition: all 0.25s;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
         }
         .zhuyin-slot.active {
             border-color: #ec4899;
@@ -233,25 +234,18 @@
             letter-spacing: -0.05em;
         }
 
-        .example-img-loaded {
-            animation: fadeInImage 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        @keyframes fadeInImage {
-            from { opacity: 0; transform: scale(0.9) translateY(3px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
         .font-biaukai {
             font-family: 'BiauKai', 'DFKai-SB', 'Kaiti TC', '楷體-繁', '標楷體', serif;
         }
 
         .key-btn {
-            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.1s ease-out;
             touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
         .key-btn:active {
-            transform: scale(0.9);
-            filter: brightness(0.85);
+            transform: scale(0.92);
+            background-color: #cbd5e1 !important;
         }
     </style>
 </head>
@@ -260,13 +254,14 @@
 
     <div id="app" class="max-w-7xl mx-auto px-4 pt-4 relative z-10">
         
+        <!-- 大廳畫面 -->
         <div id="menu-screen" class="flex flex-col items-center">
             <div class="text-center mb-6">
                 <h1 class="text-3xl md:text-4xl font-black text-fuchsia-600 mb-2 drop-shadow-md flex items-center justify-center gap-2">
                     <span class="text-4xl">👑</span> 星光公主注音魔法拼圖
                 </h1>
                 <p class="text-base text-fuchsia-500 font-bold bg-white/80 px-5 py-1.5 rounded-full shadow-sm inline-block border border-pink-100">
-                    🎯 國小二年級國語生字拼音大挑戰（鍵盤直打版）
+                    🎯 國小二年級國語生字拼音大挑戰（標準注音鍵盤版）
                 </p>
             </div>
             
@@ -282,6 +277,7 @@
             </div>
         </div>
 
+        <!-- 遊戲主畫面 -->
         <div id="game-screen" class="hidden flex flex-col items-center animate-fade-in">
             
             <div class="w-full max-w-7xl flex flex-wrap justify-between items-center mb-4 bg-white/95 p-3.5 rounded-3xl shadow-sm border border-fuchsia-100 gap-3">
@@ -299,19 +295,23 @@
                 </div>
             </div>
 
-            <div class="flex flex-col lg:flex-row gap-5 w-full max-w-7xl items-stretch justify-center">
+            <!-- 主區塊：左側 8/12 大畫布 & 暫存區，右側 4/12 拼音大字 -->
+            <div class="flex flex-col lg:flex-row gap-5 w-full max-w-7xl items-stretch justify-center relative">
                 
+                <!-- 左側：背包暫存區 + 魔法畫布 -->
                 <div class="w-full lg:w-8/12 flex flex-col gap-4 justify-start">
                     
-                    <div class="bg-white/90 p-4 rounded-3xl border border-pink-100 shadow-md">
-                        <h3 class="text-purple-600 font-bold mb-2 flex items-center gap-1.5 text-xs">
-                            <i class="fa-solid fa-box-open text-sm"></i> 獲得的拼圖卡 (請滑動至下方對應位置，或先點拼圖再點格子組合)
+                    <!-- 拼圖背包暫存區 (放置在最上方，動線更流暢) -->
+                    <div class="bg-white/90 p-3 rounded-2xl border border-pink-100 shadow-md">
+                        <h3 class="text-purple-600 font-bold mb-1.5 flex items-center gap-1.5 text-xs">
+                            <i class="fa-solid fa-box-open text-sm"></i> 獲得的拼圖卡 (請滑動或點擊至對應格子)
                         </h3>
                         <div id="inventory-area" class="inventory-area">
                             <span class="text-gray-400 font-medium text-xs" id="inventory-empty-msg">答對生字後，拼圖卡就會飛到這裡喔！</span>
                         </div>
                     </div>
 
+                    <!-- 魔法畫布區 (拉大比例) -->
                     <div class="bg-white/80 p-4 rounded-3xl border border-pink-100 shadow-md flex flex-col items-center">
                         <h3 class="text-fuchsia-600 font-bold mb-2 flex items-center gap-1.5 text-xs self-start pl-2">
                             <i class="fa-solid fa-wand-magic-sparkles text-sm"></i> 皇家公主魔法畫布 (大畫布模式)
@@ -322,7 +322,8 @@
 
                 </div>
 
-                <div class="w-full lg:w-4/12 bg-white/95 p-4 rounded-3xl shadow-md border border-pink-100 flex flex-col justify-between relative">
+                <!-- 右側：拼字大字、例句對照、虛擬鍵盤 -->
+                <div class="w-full lg:w-4/12 bg-white/95 p-4 rounded-3xl shadow-md border border-pink-100 flex flex-col justify-between relative min-h-[500px]">
                     
                     <div class="flex justify-between items-center mb-2">
                         <p class="text-fuchsia-500 font-black text-xs flex items-center gap-1" id="quiz-instruction">
@@ -339,19 +340,20 @@
                         <p class="text-[10px] text-emerald-600 mt-1">快用雙手把上方的拼圖移至對應格子，修復美麗的公主畫像！</p>
                     </div>
 
-                    <div id="quiz-area" class="flex flex-row items-center justify-center gap-6 bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-2xl border border-pink-50 mb-3 w-full min-h-[160px]">
-                        <!-- 放大的生字 -->
-                        <h1 id="target-word" class="text-[90px] md:text-[110px] lg:text-[130px] font-biaukai font-black text-gray-800 drop-shadow-sm leading-none select-none">朵</h1>
+                    <!-- 拼注音輸入區 -->
+                    <div id="quiz-area" onclick="triggerMobileKeyboardInput()" class="cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-6 bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-2xl border border-pink-50 mb-3 w-full min-h-[160px]">
+                        <!-- 超級放大生字 (依要求放大) -->
+                        <h1 id="target-word" class="text-[100px] md:text-[120px] lg:text-[140px] font-biaukai font-black text-gray-800 drop-shadow-sm leading-none select-none">朵</h1>
                         
                         <div id="zhuyin-slots" class="flex flex-col gap-1.5 items-center justify-center min-w-[60px]">
                         </div>
                     </div>
 
+                    <!-- 例句對照區 (精簡無動畫) -->
                     <div id="example-area" class="w-full bg-white border border-pink-100 rounded-2xl p-3 flex flex-col items-center gap-2 shadow-inner mb-3">
                         <div class="flex items-center gap-2 w-full">
-                            <div class="w-12 h-12 shrink-0 rounded-lg overflow-hidden border border-fuchsia-200 bg-pink-50 flex items-center justify-center relative shadow-sm">
-                                <i id="example-loading" class="fa-regular fa-image text-fuchsia-300 text-base absolute"></i>
-                                <img id="example-image" class="w-full h-full object-cover opacity-0 transition-opacity duration-300 relative z-10" src="" alt="插圖">
+                            <div class="w-10 h-10 shrink-0 rounded-lg border border-fuchsia-200 bg-pink-50 flex items-center justify-center relative shadow-sm">
+                                <i id="example-loading" class="fa-solid fa-book-open text-fuchsia-400 text-base"></i>
                             </div>
                             <div class="text-left">
                                 <span class="bg-fuchsia-100 text-fuchsia-700 text-[9px] font-black px-1.5 py-0.5 rounded-full"><i class="fa-solid fa-book text-[8px]"></i> 課文例句對照</span>
@@ -359,21 +361,29 @@
                             </div>
                         </div>
                         
-                        <div id="example-sentence" class="text-gray-700 font-bold text-base leading-relaxed tracking-wide flex flex-wrap items-center justify-center w-full min-h-[50px] bg-slate-50/50 p-2.5 rounded-xl border border-dashed border-slate-200">
+                        <div id="example-sentence" class="text-gray-700 font-bold text-sm leading-relaxed tracking-wide flex flex-wrap items-center justify-center w-full min-h-[45px] bg-slate-50/50 p-2 rounded-xl border border-dashed border-slate-200">
                             載入例句中...
                         </div>
                     </div>
 
-                    <div id="virtual-keyboard" class="w-full bg-slate-100 p-2.5 rounded-2xl border border-slate-200">
-                        <div class="text-[9px] text-slate-400 font-bold text-center mb-1.5">✨ 點擊輸入注音符號，或直接使用實體鍵盤！</div>
+                    <!-- 虛擬鍵盤容器 (標準鍵盤/手持抽屜雙模組) -->
+                    <!-- 遮罩層 (僅手機版開啟時使用) -->
+                    <div id="keyboard-mobile-overlay" onclick="toggleMobileKeyboard(false)" class="hidden fixed inset-0 bg-black/60 z-40 transition-opacity duration-300 opacity-0"></div>
+
+                    <div id="keyboard-container" class="fixed bottom-0 left-0 right-0 z-50 bg-slate-100 p-3 rounded-t-3xl shadow-2xl border-t border-slate-200 transition-transform duration-300 transform translate-y-full md:relative md:translate-y-0 md:rounded-2xl md:shadow-none md:border md:z-10 md:bg-slate-50 md:p-3">
                         
-                        <div class="flex flex-col gap-1">
-                            <div class="grid grid-cols-7 gap-1" id="keyboard-initials">
-                            </div>
-                            <div class="grid grid-cols-7 gap-1" id="keyboard-finals">
-                            </div>
-                            <div class="grid grid-cols-5 gap-1" id="keyboard-tones">
-                            </div>
+                        <!-- 手機版鍵盤標題與控制列 -->
+                        <div class="flex justify-between items-center mb-2 px-1 md:hidden">
+                            <span class="text-xs font-black text-fuchsia-600"><i class="fa-regular fa-keyboard"></i> 魔法注音輸入鍵盤</span>
+                            <button onclick="toggleMobileKeyboard(false)" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 px-2.5 py-1 rounded-full font-bold">
+                                隱藏 ✕
+                            </button>
+                        </div>
+
+                        <div class="text-[9px] text-slate-400 font-bold text-center mb-1.5 hidden md:block">✨ 點擊輸入注音符號，或直接使用實體鍵盤！</div>
+                        
+                        <!-- 四排電腦大千格式標準鍵盤 -->
+                        <div class="flex flex-col gap-1 w-full" id="standard-keyboard-grid">
                         </div>
                     </div>
 
@@ -381,6 +391,12 @@
             </div>
         </div>
 
+        <!-- 手機版常駐魔法鍵盤呼喚按鈕 (點選可開啟注音鍵盤) -->
+        <button id="mobile-keyboard-trigger" onclick="toggleMobileKeyboard(true)" class="md:hidden fixed bottom-4 right-4 z-30 bg-gradient-to-r from-pink-500 to-fuchsia-500 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-lg active:scale-90 border-2 border-white">
+            <i class="fa-solid fa-keyboard"></i>
+        </button>
+
+        <!-- 通關燈箱 -->
         <div id="completion-modal" class="hidden fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4">
             <div class="bg-white rounded-[2rem] p-6 max-w-lg w-full text-center shadow-2xl transform transition-all border-[6px] border-pink-400 relative overflow-hidden animate-pop-in">
                 
@@ -411,19 +427,20 @@
     </div>
 
     <script>
+        // 大字備用字庫：擴充各課生字至 15~18 個，支援動體抽選，重玩時不重樣
         const allLessons = {
-            1: { title: "第一課 彩色心情", words: {"翠":"ㄘㄨㄟˋ","晴":"ㄑㄧㄥˊ","溫":"ㄨㄣ","度":"ㄉㄨˋ","深":"ㄕㄣ","藍":"ㄌㄢˊ","淚":"ㄌㄟˋ","藏":"ㄘㄤˊ","潔":"ㄐㄧㄝˊ","朵":"ㄉㄨㄛˇ"} },
-            2: { title: "第二課 勇敢超人", words: {"敢":"ㄍㄢˇ","超":"ㄔㄠ","窗":"ㄔㄨㄤ","盆":"ㄆㄣˊ","破":"ㄆㄛˋ","悄":"ㄑㄧㄠˇ","伸":"ㄕㄣ","重":"ㄓㄨㄥˋ","石":"ㄕˊ","消":"ㄒㄧㄠ"} },
-            3: { title: "第三課 小波氣球飛上天", words: {"輸":"ㄕㄨ","氣":"ㄑㄧˋ","鼓":"ㄍㄨˇ","竟":"ㄐㄧㄥˋ","飄":"ㄆㄧㄠ","抓":"ㄓㄨㄚ","急":"ㄐㄧˊ","踢":"ㄊㄧ","冷":"ㄌㄥˇ","終":"ㄓㄨㄥ"} },
-            4: { title: "第四課 小水珠, 去哪裡", words: {"珠":"ㄓㄨ","微":"ㄨㄟˊ","醒":"ㄒㄧㄥˇ","掛":"ㄍㄨㄚˋ","閃":"ㄕㄢˇ","鍊":"ㄌㄧㄢˋ","仙":"ㄒㄧㄢ","禮":"ㄌㄧˇ","探":"ㄊㄢˋ","晶":"ㄐㄧㄥ"} },
-            5: { title: "第五課 生日快樂", words: {"病":"ㄅㄧㄥˋ","睛":"ㄐㄧㄥ","份":"ㄈㄣˋ","段":"ㄉㄨㄢˋ","晃":"ㄏㄨㄤˋ","籃":"ㄌㄢˊ","耳":"ㄦˇ","祕":"ㄇㄧˋ","涼":"ㄌㄧㄤˊ","寶":"ㄅㄠˇ"} },
-            6: { title: "第六課 給地球的一封信", words: {"封":"ㄈㄥ","貴":"ㄍㄨㄟˋ","蝦":"ㄒㄧㄚ","植":"ㄓˊ","汙":"ㄨ","染":"ㄖㄢˇ","餐":"ㄘㄢ","具":"ㄐㄩˋ","資":"ㄗ","源":"ㄩㄢˊ"} },
-            7: { title: "第七課 傘", words: {"暗":"ㄢˋ","猜":"ㄘㄞ","字":"ㄗˋ","撐":"ㄔㄥ","屋":"ㄨ","頂":"ㄉㄧㄥˇ","枴":"ㄍㄨㄞˇ","杖":"ㄓㄤˋ","滴":"ㄉㄧ","答":"ㄉㄚˊ"} },
-            8: { title: "第八課 老園丁的話", words: {"丁":"ㄉㄧㄥ","認":"ㄖㄣˋ","客":"ㄎㄜˋ","興":"ㄒㄧㄥ","照":"ㄓㄠˋ","皮":"ㄆㄧˊ","摘":"ㄓㄞ","位":"ㄨㄟˋ","牌":"ㄆㄞˊ","欣":"ㄒㄧㄣ"} },
-            9: { title: "第九課 小小說書人", words: {"排":"ㄆㄞˊ","紹":"ㄕㄠˋ","其":"ㄑㄧˊ","帽":"ㄇㄠˋ","頂":"ㄉㄧㄥˇ","糕":"ㄍㄠ","扶":"ㄈㄨ","學":"ㄒㄩㄝˊ","猴":"ㄏㄡˊ","息":"ㄒㄧˊ"} },
-            10: { title: "第十課 點金術", words: {"術":"ㄕㄨˋ","銀":"ㄧㄣˊ","珠":"ㄓㄨ","寶":"ㄅㄠˇ","願":"ㄩㄢˋ","摸":"ㄇㄛ","椅":"ㄧˇ","慌":"ㄏㄨㄤ","純":"ㄔㄨㄣˊ","狀":"ㄓㄨㄤˋ"} },
-            11: { title: "第十一課 我喜歡你", words: {"敗":"ㄅㄞˋ","操":"ㄘㄠ","脖":"ㄅㄛˊ","瞇":"ㄇㄧ","密":"ㄇㄧˋ","特":"ㄊㄜˋ","別":"ㄅㄧㄝˊ","彈":"ㄊㄢˊ","練":"ㄌㄧㄢˋ","習":"ㄒㄧˊ"} },
-            12: { title: "第十二課 如果, 我的房間……", words: {"牆":"ㄑㄧㄤˊ","壁":"ㄅㄧˋ","窗":"ㄔㄨㄤ","鋪":"ㄆㄨ","輪":"ㄌㄨㄣˊ","冰":"ㄅㄧㄥ","且":"ㄑㄧㄝˇ","刻":"ㄎㄜˋ","鮮":"ㄒㄧㄢ","汁":"ㄓ"} }
+            1: { title: "第一課 彩色心情", words: {"翠":"ㄘㄨㄟˋ","晴":"ㄑㄧㄥˊ","溫":"ㄨㄣ","度":"ㄉㄨˋ","深":"ㄕㄣ","藍":"ㄌㄢˊ","淚":"ㄌㄟˋ","藏":"ㄘㄤˊ","潔":"ㄐㄧㄝˊ","朵":"ㄉㄨㄛˇ","坡":"ㄆㄛ","綠":"ㄌㄩˋ","山":"ㄕㄢ","海":"ㄏㄞˇ","雲":"ㄩㄣˊ","眼":"ㄧㄢˇ"} },
+            2: { title: "第二課 勇敢超人", words: {"敢":"ㄍㄢˇ","超":"ㄔㄠ","窗":"ㄔㄨㄤ","盆":"ㄆㄣˊ","破":"ㄆㄛˋ","悄":"ㄑㄧㄠˇ","伸":"ㄕㄣ","重":"ㄓㄨㄥˋ","石":"ㄕˊ","消":"ㄒㄧㄠ","人":"ㄖㄣˊ","牆":"ㄑㄧㄤˊ","壁":"ㄅㄧˋ","花":"ㄏㄨㄚ","頭":"ㄊㄡˊ"} },
+            3: { title: "第三課 小波氣球飛上天", words: {"輸":"ㄕㄨ","氣":"ㄑㄧˋ","鼓":"ㄍㄨˇ","竟":"ㄐㄧㄥˋ","飄":"ㄆㄧㄠ","抓":"ㄓㄨㄚ","急":"ㄐㄧˊ","踢":"ㄊㄧ","冷":"ㄌㄥˇ","終":"ㄓㄨㄥ","波":"ㄅㄛ","玩":"ㄨㄢˊ","戲":"ㄒㄧˋ","肚":"ㄉㄨˋ","大":"ㄉㄚˋ"} },
+            4: { title: "第四課 小水珠, 去哪裡", words: {"珠":"ㄓㄨ","微":"ㄨㄟˊ","醒":"ㄒㄧㄥˇ","掛":"ㄍㄨㄚˋ","閃":"ㄕㄢˇ","鍊":"ㄌㄧㄢˋ","仙":"ㄒㄧㄢ","禮":"ㄌㄧˇ","探":"ㄊㄢˋ","晶":"ㄐㄧㄥ","亮":"ㄌㄧㄤˋ","葉":"ㄧㄝˋ","香":"ㄒㄧㄤ","滾":"ㄍㄨㄣˇ","球":"ㄑㄧㄡˊ","雨":"ㄩˇ"} },
+            5: { title: "第五課 生日快樂", words: {"病":"ㄅㄧㄥˋ","睛":"ㄐㄧㄥ","份":"ㄈㄣˋ","段":"ㄉㄨㄢˋ","晃":"ㄏㄨㄤˋ","籃":"ㄌㄢˊ","耳":"ㄦˇ","祕":"ㄇㄧˋ","涼":"ㄌㄧㄤˊ","寶":"ㄅㄠˇ","生":"ㄕㄥ","快":"ㄎㄨㄞˋ","樂":"ㄌㄜˋ","牽":"ㄑㄧㄢ","路":"ㄌㄨˋ"} },
+            6: { title: "第六課 給地球的一封信", words: {"封":"ㄈㄥ","貴":"ㄍㄨㄟˋ","蝦":"ㄒㄧㄚ","植":"ㄓˊ","汙":"ㄨ","染":"ㄖㄢˇ","餐":"ㄘㄢ","具":"ㄐㄩˋ","資":"ㄗ","源":"ㄩㄢˊ","信":"ㄒㄧㄣ","海":"ㄏㄞˇ","魚":"ㄩˊ","物":"ㄨˋ","收":"ㄕㄡ"} },
+            7: { title: "第七課 傘", words: {"暗":"ㄢˋ","猜":"ㄘㄞ","字":"ㄗˋ","撐":"ㄔㄥ","屋":"ㄨ","頂":"ㄉㄧㄥˇ","枴":"ㄍㄨㄞˇ","杖":"ㄓㄤˋ","滴":"ㄉㄧ","答":"ㄉㄚˊ","雨":"ㄩˇ","雲":"ㄩㄣˊ","天":"ㄊㄧㄢ","合":"ㄏㄜˊ"} },
+            8: { title: "第八課 老園丁的話", words: {"丁":"ㄉㄧㄥ","認":"ㄖㄣˋ","客":"ㄎㄜˋ","興":"ㄒㄧㄥ","照":"ㄓㄠˋ","皮":"ㄆㄧˊ","摘":"ㄓㄞ","位":"ㄨㄟˋ","牌":"ㄆㄞˊ","欣":"ㄒㄧㄣ","園":"ㄩㄢˊ","話":"ㄏㄨㄚˋ","識":"ㄕˋ","賓":"ㄅㄧㄣ","頑":"ㄨㄢˊ","狗":"ㄍㄡˇ"} },
+            9: { title: "第九課 小小說書人", words: {"排":"ㄆㄞˊ","紹":"ㄕㄠˋ","其":"ㄑㄧˊ","帽":"ㄇㄠˋ","頂":"ㄉㄧㄥˇ","糕":"ㄍㄠ","扶":"ㄈㄨ","學":"ㄒㄩㄝˊ","猴":"ㄏㄡˊ","息":"ㄒㄧˊ","介":"ㄐㄧㄝˋ","精":"ㄐㄧㄥ","彩":"ㄘㄞˇ","戴":"ㄉㄞˋ","紅":"ㄏㄨㄥˊ"} },
+            10: { title: "第十課 點金術", words: {"術":"ㄕㄨˋ","銀":"ㄧㄣˊ","珠":"ㄓㄨ","寶":"ㄅㄠˇ","願":"ㄩㄢˋ","摸":"ㄇㄛ","椅":"ㄧˇ","慌":"ㄏㄨㄤ","純":"ㄔㄨㄣˊ","狀":"ㄓㄨㄤˋ","國":"ㄍㄨㄛˊ","王":"ㄨㄤˊ","魔":"ㄇㄛˊ","法":"ㄈㄚˇ","金":"ㄐㄧㄣ"} },
+            11: { title: "第十一課 我喜歡你", words: {"敗":"ㄅㄞˋ","操":"ㄘㄠ","脖":"ㄅㄛˊ","瞇":"ㄇㄧ","密":"ㄇㄧˋ","特":"ㄊㄜˋ","別":"ㄅㄧㄝˊ","彈":"ㄊㄢˊ","練":"ㄌㄧㄢˋ","習":"ㄒㄧˊ","喜":"ㄒㄧˇ","歡":"ㄏㄨㄢ","鼓":"ㄍㄨˇ","勵":"ㄌㄧˋ","旁":"ㄆㄤˊ"} },
+            12: { title: "第十二課 如果, 我的房間……", words: {"牆":"ㄑㄧㄤˊ","壁":"ㄅㄧˋ","窗":"ㄔㄨㄤ","鋪":"ㄆㄨ","輪":"ㄌㄨㄣˊ","冰":"ㄅㄧㄥ","且":"ㄑㄧㄝˇ","刻":"ㄎㄜˋ","鮮":"ㄒㄧㄢ","汁":"ㄓ","房":"ㄈㄤˊ","床":"ㄔㄨㄤˊ","桌":"ㄓㄨㄛ","玩":"ㄨㄢˊ","夏":"ㄒㄧㄚˋ","北":"ㄅㄟˇ"} }
         };
 
         const princessImages = {
@@ -443,7 +460,6 @@
         };
 
         const sentencesDict = {
-            // 第一課
             "翠": "開(ㄎㄞ) 心(ㄒㄧㄣ) 的(ㄉㄜ˙) 時(ㄕˊ) 候(ㄏㄡˋ) ， 我(ㄨㄛˇ) 想(ㄒㄧㄤˇ) 畫(ㄏㄨㄚˋ) 出(ㄔㄨ) 翠(ㄘㄨㄟˋ) 綠(ㄌㄩˋ) 的(ㄉㄜ˙) 山(ㄕㄢ) 坡(ㄆㄛ) 。",
             "晴": "天(ㄊㄧㄢ) 氣(ㄑㄧˋ) 晴(ㄑㄧㄥˊ) 朗(ㄌㄤˇ) ， 我(ㄨㄛˇ) 邀(ㄧㄠ) 請(ㄑㄧㄥˇ) 爺(ㄧㄝˊ) 爺(ㄧㄝˊ) 去(ㄑㄩˋ) 散(ㄙㄢˋ) 步(ㄅㄨˋ) 。",
             "溫": "第(ㄉㄧˋ) 壹(ㄧ) 單(ㄉㄢ) 元(ㄩㄢˊ) ： 心(ㄒㄧㄣ) 情(ㄑㄧㄥˊ) 溫(ㄨㄣ) 度(ㄉㄨˋ) 計(ㄐㄧˋ) 。",
@@ -454,20 +470,30 @@
             "藏": "把(ㄅㄚˇ) 眼(ㄧㄢˇ) 淚(ㄌㄟˋ) 藏(ㄘㄤˊ) 在(ㄗㄞˋ) 水(ㄕㄨㄟˇ) 裡(ㄌㄧˇ) 。",
             "潔": "開(ㄎㄞ) 心(ㄒㄧㄣ) 的(ㄉㄜ˙) 時(ㄕˊ) 候(ㄏㄡˋ) ， 我(ㄨㄛˇ) 想(ㄒㄧㄤˇ) 畫(ㄏㄨㄚˋ) 出(ㄔㄨ) 潔(ㄐㄧㄝˊ) 白(ㄅㄞˊ) 的(ㄉㄜ˙) 雲(ㄩㄣˊ) 朵(ㄉㄨㄛˇ) 。",
             "朵": "開(ㄎㄞ) 心(ㄒㄧㄣ) 的(ㄉㄜ˙) 時(ㄕˊ) 候(ㄏㄡˋ) ， 我(ㄨㄛˇ) 想(ㄒㄧㄤˇ) 畫(ㄏㄨㄚˋ) 出(ㄔㄨ) 潔(ㄐㄧㄝˊ) 白(ㄅㄞˊ) 的(ㄉㄜ˙) 雲(ㄩㄣˊ) 朵(ㄉㄨㄛˇ) 。",
+            "綠": "我(ㄨㄛˇ) 想(ㄒㄧㄤˇ) 畫(ㄏㄨㄚˋ) 出(ㄔㄨ) 翠(ㄘㄨㄟˋ) 綠(ㄌㄩˋ) 的(ㄉㄜ˙) 山(ㄕㄢ) 坡(ㄆㄛ) 。",
+            "山": "綠(ㄌㄩˋ) 色(ㄙㄜˋ) 的(ㄉㄜ˙) 山(ㄕㄢ) 坡(ㄆㄛ) 真(ㄓㄣ) 美(ㄇㄟˇ) 麗(ㄌㄧˋ) 。",
+            "坡": "我(ㄨㄛˇ) 想(ㄒㄧㄤˇ) 畫(ㄏㄨㄚˋ) 出(ㄔㄨ) 翠(ㄘㄨㄟˋ) 綠(ㄌㄩˋ) 的(ㄉㄜ˙) 山(ㄕㄢ) 坡(ㄆㄛ) 。",
+            "海": "傷(ㄕㄤ) 心(ㄒㄧㄣ) 的(ㄉㄜ˙) 時(ㄕˊ) 候(ㄏㄡˋ) ， 我(ㄨㄛˇ) 想(ㄒㄧㄤˇ) 畫(ㄏㄨㄚˋ) 出(ㄔㄨ) 深(ㄕㄣ) 藍(ㄌㄢˊ) 的(ㄉㄜ˙) 大(ㄉㄚˋ) 海(ㄏㄞˇ) 。",
+            "雲": "潔(ㄐㄧㄝˊ) 白(ㄅㄞˊ) 的(ㄉㄜ˙) 雲(ㄩㄣˊ) 朵(ㄉㄨㄛˇ) 飄(ㄆㄧㄠ) 呀(ㄧㄚ) 飄(ㄆㄧㄠ) 。",
+            "眼": "把(ㄅㄚˇ) 眼(ㄧㄢˇ) 淚(ㄌㄟˋ) 藏(ㄘㄤˊ) 在(ㄗㄞˋ) 水(ㄕㄨㄟˇ) 裡(ㄌㄧˇ) 。",
 
-            // 第二課
             "敢": "假(ㄐㄧㄚˇ) 如(ㄖㄨˊ) 我(ㄨㄛˇ) 是(ㄕˋ) 勇(ㄩㄥˇ) 敢(ㄍㄢˇ) 超(ㄔㄠ) 人(ㄖㄣˊ) 。",
             "超": "假(ㄐㄧㄚˇ) 如(ㄖㄨˊ) 我(ㄨㄛˇ) 是(ㄕˋ) 勇(ㄩㄥˇ) 敢(ㄍㄢˇ) 超(ㄔㄠ) 人(ㄖㄣˊ) 。",
             "窗": "那(ㄋㄚˋ) 是(ㄕˋ) 一(ㄧˋ) 間(ㄐㄧㄢ) 有(ㄧㄡˇ) 牆(ㄑㄧㄤˊ) 壁(ㄅㄧˋ) 、 門(ㄇㄣˊ) 窗(ㄔㄨㄤ) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 。",
-            "盆": "球(ㄑㄧㄡˊ) 從(ㄘㄨㄥˊ) 他(ㄊㄚ) 的(ㄉㄜ˙) 頭(ㄊㄡˊ) 上(ㄕㄤˋ) 飛(ㄈㄟ) 過(ㄍㄨㄛˋ) ， 打(ㄉㄚˇ) 中(ㄓㄨㄥˋ) 花(ㄏㄨㄚ) 盆(ㄆㄣˊ) ， 花(ㄏㄨㄚ) 盆(ㄆㄣˊ) 破(ㄆㄛˋ) 了(ㄌㄜ˙) 。",
-            "破": "球(ㄑㄧㄡˊ) 從(ㄘㄨㄥˊ) 他(ㄊㄚ) 的(ㄉㄜ˙) 頭(ㄊㄡˊ) 上(ㄕㄤˋ) 飛(ㄈㄟ) 過(ㄍㄨㄛˋ) ， 打(ㄉㄚˇ) 中(ㄓㄨㄥˋ) 花(ㄏㄨㄚ) 盆(ㄆㄣˊ) ， 花(ㄏㄨㄚ) 盆(ㄆㄣˊ) 破(ㄆㄛˋ) 了(ㄌㄜ˙) 。",
+            "盆": "打(ㄉㄚˇ) 中(ㄓㄨㄥˋ) 花(ㄏㄨㄚ) 盆(ㄆㄣˊ) ， 花(ㄏㄨㄚ) 盆(ㄆㄣˊ) 破(ㄆㄛˋ) 了(ㄌㄜ˙) 。",
+            "破": "打(ㄉㄚˇ) 中(ㄓㄨㄥˋ) 花(ㄏㄨㄚ) 盆(ㄆㄣˊ) ， 花(ㄏㄨㄚ) 盆(ㄆㄣˊ) 破(ㄆㄛˋ) 了(ㄌㄜ˙) 。",
             "悄": "奇(ㄑㄧˊ) 奇(ㄑㄧˊ) 和(ㄏㄢˋ) 弟(ㄉㄧˋ) 弟(ㄉㄧˋ) 看(ㄎㄢˋ) 到(ㄉㄠˋ) 花(ㄏㄨㄚ) 盆(ㄆㄣˊ) 破(ㄆㄛˋ) 了(ㄌㄜ˙) ， 就(ㄐㄧㄡˋ) 悄(ㄑㄧㄠˇ) 悄(ㄑㄧㄠˇ) 跑(ㄆㄠˇ) 回(ㄏㄨㄟˊ) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 。",
             "伸": "假(ㄐㄧㄚˇ) 如(ㄖㄨˊ) 我(ㄨㄛˇ) 的(ㄉㄜ˙) 手(ㄕㄡˇ) 伸(ㄕㄣ) 長(ㄔㄤˊ) 一(ㄧˋ) 點(ㄉㄧㄢˇ) 。",
             "重": "奇(ㄑㄧˊ) 奇(ㄑㄧˊ) 覺(ㄐㄩㄝˊ) 得(ㄉㄜ˙) 心(ㄒㄧㄣ) 裡(ㄌㄧˇ) 有(ㄧㄡˇ) 一(ㄧˋ) 塊(ㄎㄨㄞˋ) 重(ㄓㄨㄥˋ) 重(ㄓㄨㄥˋ) 的(ㄉㄜ˙) 石(ㄕˊ) 頭(ㄊㄡˊ) 。",
             "石": "奇(ㄑㄧˊ) 奇(ㄑㄧˊ) 覺(ㄐㄩㄝˊ) 得(ㄉㄜ˙) 心(ㄒㄧㄣ) 裡(ㄌㄧˇ) 有(ㄧㄡˇ) 一(ㄧˋ) 塊(ㄎㄨㄞˋ) 重(ㄓㄨㄥˋ) 重(ㄓㄨㄥˋ) 的(ㄉㄜ˙) 石(ㄕˊ) 頭(ㄊㄡˊ) 。",
             "消": "他(ㄊㄚ) 覺(ㄐㄩㄝˊ) 得(ㄉㄜ˙) 心(ㄒㄧㄣ) 裡(ㄌㄧˇ) 的(ㄉㄜ˙) 石(ㄕˊ) 頭(ㄊㄡˊ) 消(ㄒㄧㄠ) 失(ㄕ) 了(ㄌㄜ˙) 。",
+            "人": "假(ㄐㄧㄚˇ) 如(ㄖㄨˊ) 我(ㄨㄛˇ) 是(ㄕˋ) 勇(ㄩㄥˇ) 敢(ㄍㄢˇ) 超(ㄔㄠ) 人(ㄖㄣˊ) 。",
+            "牆": "那(ㄋㄚˋ) 是(ㄕˋ) 一(ㄧˋ) 間(ㄐㄧㄢ) 有(ㄧㄡˇ) 牆(ㄑㄧㄤˊ) 壁(ㄅㄧˋ) 、 門(ㄇㄣˊ) 窗(ㄔㄨㄤ) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 。",
+            "壁": "那(ㄋㄚˋ) 是(ㄕˋ) 一(ㄧˋ) 間(ㄐㄧㄢ) 有(ㄧㄡˇ) 牆(ㄑㄧㄤˊ) 壁(ㄅㄧˋ) 、 門(ㄇㄣˊ) 窗(ㄔㄨㄤ) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 。",
+            "門": "那(ㄋㄚˋ) 是(ㄕˋ) 一(ㄧˋ) 間(ㄐㄧㄢ) 有(ㄧㄡˇ) 門(ㄇㄣˊ) 窗(ㄔㄨㄤ) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 。",
+            "花": "打(ㄉㄚˇ) 中(ㄓㄨㄥˋ) 花(ㄏㄨㄚ) 盆(ㄆㄣˊ) 。",
+            "頭": "奇(ㄑㄧˊ) 奇(ㄑㄧˊ) 覺(ㄐㄩㄝˊ) 得(ㄉㄜ˙) 心(ㄒㄧㄣ) 裡(ㄌㄧˇ) 有(ㄧㄡˇ) 一(ㄧˋ) 塊(ㄎㄨㄞˋ) 重(ㄓㄨㄥˋ) 重(ㄓㄨㄥˋ) 的(ㄉㄜ˙) 石(ㄕˊ) 頭(ㄊㄡˊ) 。",
 
-            // 第三課
             "輸": "玩(ㄨㄢˊ) 遊(ㄧㄡˊ) 戲(ㄒㄧˋ) 時(ㄕˊ) ， 小(ㄒㄧㄠˇ) 波(ㄅㄛ) 輸(ㄕㄨ) 了(ㄌㄜ˙) 好(ㄏㄠˇ) 幾(ㄐㄧˇ) 次(ㄘˋ) ！",
             "氣": "小(ㄒㄧㄠˇ) 波(ㄅㄛ) 氣(ㄑㄧˋ) 呼(ㄏㄨ) 呼(ㄏㄨ) 的(ㄉㄜ˙) 叫(ㄐㄧㄠˋ) 著(ㄓㄜ˙) 。",
             "鼓": "他(ㄊㄚ) 的(ㄉㄜ˙) 肚(ㄉㄨˋ) 子(ㄗ˙) 慢(ㄇㄢˋ) 慢(ㄇㄢˋ) 鼓(ㄍㄨˇ) 了(ㄌㄜ˙) 起(ㄑㄧˇ) 來(ㄌㄞˊ) 。",
@@ -476,10 +502,14 @@
             "抓": "貝(ㄅㄟˋ) 貝(ㄅㄟˋ) 急(ㄐㄧˊ) 忙(ㄇㄤˊ) 抓(ㄓㄨㄚ) 住(ㄓㄨˋ) 小(ㄒㄧㄠˇ) 波(ㄅㄛ) 。",
             "急": "貝(ㄅㄟˋ) 貝(ㄅㄟˋ) 急(ㄐㄧˊ) 忙(ㄇㄤˊ) 抓(ㄓㄨㄚ) 住(ㄓㄨˋ) 小(ㄒㄧㄠˇ) 波(ㄅㄛ) 。",
             "踢": "著(ㄓㄠ) 急(ㄐㄧˊ) 的(ㄉㄜ˙) 小(ㄒㄧㄠˇ) 波(ㄅㄛ) 不(ㄅㄨˋ) 停(ㄊㄧㄥˊ) 的(ㄉㄜ˙) 用(ㄩㄥˋ) 力(ㄌㄧˋ) 踢(ㄊㄧ) 。",
-            "冷": "小(ㄒㄧㄠˇ) 波(ㄅㄛ) 冷(ㄌㄥˇ) 靜(ㄐㄧㄥˋ) 下(ㄒㄧㄚˋ) 來(ㄌㄞˊ) 。",
+            "冷": "小(ㄒㄧˇ) 波(ㄅㄛ) 冷(ㄌㄥˇ) 靜(ㄐㄧㄥˋ) 下(ㄒㄧㄚˋ) 來(ㄌㄞˊ) 。",
             "終": "他(ㄊㄚ) 們(ㄇㄣˊ) 終(ㄓㄨㄥ) 於(ㄩˊ) 回(ㄏㄨㄟˊ) 到(ㄉㄠˋ) 地(ㄉㄧˋ) 面(ㄇㄧㄢˋ) 。",
+            "波": "玩(ㄨㄢˊ) 遊(ㄧㄡˊ) 戲(ㄒㄧˋ) 時(ㄕˊ) ， 小(ㄒㄧㄠˇ) 波(ㄅㄛ) 輸(ㄕㄨ) 了(ㄌㄜ˙) 好(ㄏㄠˇ) 幾(ㄐㄧˇ) 次(ㄘˋ) ！",
+            "玩": "玩(ㄨㄢˊ) 遊(ㄧㄡˊ) 戲(ㄒㄧˋ) 時(ㄕˊ) ， 小(ㄒㄧㄠˇ) 波(ㄅㄛ) 輸(ㄕㄨ) 了(ㄌㄜ˙) 好(ㄏㄠˇ) 幾(ㄐㄧˇ) 次(ㄘˋ) ！",
+            "戲": "玩(ㄨㄢˊ) 遊(ㄧㄡˊ) 戲(ㄒㄧˋ) 時(ㄕˊ) ， 小(ㄒㄧㄠˇ) 波(ㄅㄛ) 輸(ㄕㄨ) 了(ㄌㄜ˙) 好(ㄏㄠˇ) 幾(ㄐㄧˇ) 次(ㄘˋ) ！",
+            "肚": "他(ㄊㄚ) 的(ㄉㄜ˙) 肚(ㄉㄨˋ) 子(ㄗ˙) 慢(ㄇㄢˋ) 慢(ㄇㄢˋ) 鼓(ㄍㄨˇ) 了(ㄌㄜ˙) 起(ㄑㄧˇ) 來(ㄌㄞˊ) 。",
+            "大": "他(ㄊㄚ) 的(ㄉㄜ˙) 肚(ㄉㄨˋ) 子(ㄗ˙) 越(ㄩㄝˋ) 來(ㄌㄞˊ) 越(ㄩㄝˋ) 大(ㄉㄚˋ) 。",
 
-            // 第四課
             "珠": "小(ㄒㄧㄠˇ) 水(ㄕㄨㄟˇ) 珠(ㄓㄨ) 掛(ㄍㄨㄚˋ) 在(ㄗㄞˋ) 葉(ㄧㄝˋ) 子(ㄗ˙) 上(ㄕㄤˋ) 。",
             "微": "天(ㄊㄧㄢ) 色(ㄙㄜˋ) 微(ㄨㄟˊ) 微(ㄨㄟˊ) 亮(ㄌㄧㄤˋ) 。",
             "醒": "蝴(ㄏㄨˊ) 蝶(ㄉㄧㄝˊ) 在(ㄗㄞˋ) 綠(ㄌㄩˋ) 葉(ㄧㄝˋ) 中(ㄓㄨㄥ) 醒(ㄒㄧㄥˇ) 來(ㄌㄞˊ) 。",
@@ -490,20 +520,29 @@
             "禮": "我(ㄨㄛˇ) 要(ㄧㄠˋ) 串(ㄔㄨㄢˋ) 項(ㄒㄧㄤˋ) 鍊(ㄌㄧㄢˋ) ， 送(ㄙㄨㄥˋ) 給(ㄍㄟˇ) 仙(ㄒㄧㄢ) 子(ㄗˇ) 當(ㄉㄤ) 禮(ㄌㄧˇ) 物(ㄨˋ) 。",
             "探": "太(ㄊㄞˋ) 陽(ㄧㄤˊ) 奶(ㄋㄞˇ) 奶(ㄋㄞˇ) 探(ㄊㄢˋ) 出(ㄔㄨ) 頭(ㄊㄡˊ) 。",
             "晶": "一(ㄧˋ) 閃(ㄕㄢˇ) 一(ㄧˋ) 閃(ㄕㄢˇ) 亮(ㄌㄧㄤˋ) 晶(ㄐㄧㄥ) 晶(ㄐㄧㄥ) 。",
+            "亮": "一(ㄧˋ) 閃(ㄕㄢˇ) 一(ㄧˋ) 閃(ㄕㄢˇ) 亮(ㄌㄧㄤˋ) 晶(ㄐㄧㄥ) 晶(ㄐㄧㄥ) 。",
+            "葉": "小(ㄒㄧㄠˇ) 水(ㄕㄨㄟˇ) 珠(ㄓㄨ) 掛(ㄍㄨㄚˋ) 在(ㄗㄞˋ) 葉(ㄧㄝˋ) 子(ㄗ˙) 上(ㄕㄤˋ) 。",
+            "香": "在(ㄗㄞˋ) 花(ㄏㄨㄚ) 香(ㄒㄧㄤ) 裡(ㄌㄧˇ) 醒(ㄒㄧㄥˇ) 來(ㄌㄞˊ) 。",
+            "滾": "瓢(ㄆㄧㄠˊ) 蟲(ㄔㄨㄥˊ) 滾(ㄍㄨㄣˇ) 動(ㄉㄨㄥˋ) 水(ㄕㄨㄟˇ) 珠(ㄓㄨ) 。",
+            "球": "我(ㄨㄛˇ) 們(ㄇㄣˊ) 來(ㄌㄞˊ) 玩(ㄨㄢˊ) 滾(ㄍㄨㄣˇ) 大(ㄉㄚˋ) 球(ㄑㄧㄡˊ) 。",
+            "雨": "下(ㄒㄧㄚˋ) 起(ㄑㄧˇ) 一(ㄧˋ) 場(ㄔㄤˇ) 雨(ㄩˇ) 。",
 
-            // 第五課
             "病": "小(ㄒㄧㄠˇ) 時(ㄕˊ) 候(ㄏㄡˋ) ， 我(ㄨㄛˇ) 生(ㄕㄥ) 了(ㄌㄜ˙) 一(ㄧˋ) 場(ㄔㄤˇ) 病(ㄅㄧㄥˋ) ， 眼(ㄧㄢˇ) 睛(ㄐㄧㄥ) 就(ㄐㄧㄡˋ) 看(ㄎㄢˋ) 不(ㄅㄨˋ) 見(ㄐㄧㄢˋ) 了(ㄌㄜ˙) 。",
             "睛": "小(ㄒㄧㄠˇ) 時(ㄕˊ) 候(ㄏㄡˋ) ， 我(ㄨㄛˇ) 生(ㄕㄥ) 了(ㄌㄜ˙) 一(ㄧˋ) 場(ㄔㄤˇ) 病(ㄅㄧㄥˋ) ， 眼(ㄧㄢˇ) 睛(ㄐㄧㄥ) 就(ㄐㄧㄡˋ) 看(ㄎㄢˋ) 不(ㄅㄨˋ) 見(ㄐㄧㄢˋ) 了(ㄌㄜ˙) 。",
             "份": "我(ㄨㄛˇ) 們(ㄇㄣˊ) 要(ㄧㄠˋ) 送(ㄙㄨㄥˋ) 你(ㄋㄧˇ) 一(ㄧˋ) 份(ㄈㄣˋ) 禮(ㄌㄧˇ) 物(ㄨˋ) 。",
             "段": "爸(ㄅㄚˋ) 爸(ㄅㄚˋ) 牽(ㄑㄧㄢ) 著(ㄓㄜ˙) 我(ㄨㄛˇ) 的(ㄉㄜ˙) 手(ㄕㄡˇ) ， 走(ㄗㄡˇ) 了(ㄌㄜ˙) 好(ㄏㄠˇ) 長(ㄔㄤˊ) 一(ㄧˋ) 段(ㄉㄨㄢˋ) 路(ㄌㄨˋ) 。",
-            "晃": "火(ㄏㄨㄛˇ) 車(ㄔㄜ) 搖(ㄧㄠˊ) 搖(ㄧㄠˊ) 晃(ㄏㄨㄤˋ) 晃(ㄏㄨㄤˋ) 的(ㄉㄜ˙) ， 好(ㄏㄠˇ) 像(ㄒㄧㄤˋ) 坐(ㄗㄨㄛˋ) 在(ㄗㄞˋ) 搖(ㄧㄠˊ) 籃(ㄌㄢˊ) 裡(ㄌㄧˇ) 。",
+            "晃": "火(ㄏㄨㄛˇ) 車(ㄔㄜ) 搖(ㄧㄠˊ) 搖(ㄧㄠˊ) 晃(ㄏㄨㄤˋ) 晃(ㄏㄨㄤˋ) 的(ㄉㄜ˙) 。",
             "籃": "火(ㄏㄨㄛˇ) 車(ㄔㄜ) 搖(ㄧㄠˊ) 搖(ㄧㄠˊ) 晃(ㄏㄨㄤˋ) 晃(ㄏㄨㄤˋ) 的(ㄉㄜ˙) ， 好(ㄏㄠˇ) 像(ㄒㄧㄤˋ) 坐(ㄗㄨㄛˋ) 在(ㄗㄞˋ) 搖(ㄧㄠˊ) 籃(ㄌㄢˊ) 裡(ㄌㄧˇ) 。",
             "耳": "神(ㄕㄣˊ) 祕(ㄇㄧˋ) 的(ㄉㄜ˙) 在(ㄗㄞˋ) 我(ㄨㄛˇ) 耳(ㄦˇ) 邊(ㄅㄧㄢ) 說(ㄕㄨㄛ) 。",
             "祕": "神(ㄕㄣˊ) 祕(ㄇㄧˋ) 的(ㄉㄜ˙) 在(ㄗㄞˋ) 我(ㄨㄛˇ) 耳(ㄦˇ) 邊(ㄅㄧㄢ) 說(ㄕㄨㄛ) 。",
             "涼": "清(ㄑㄧㄥ) 涼(ㄌㄧㄤˊ) 的(ㄉㄜ˙) 海(ㄏㄞˇ) 水(ㄕㄨㄟˇ) 打(ㄉㄚˇ) 在(ㄗㄞˋ) 我(ㄨㄛˇ) 的(ㄉㄜ˙) 腳(ㄐㄧㄠˇ) 上(ㄕㄤˋ) 。",
             "寶": "寶(ㄅㄠˇ) 貝(ㄅㄟˋ) ， 生(ㄕㄥ) 日(ㄖˋ) 快(ㄎㄨㄞˋ) 樂(ㄌㄜˋ) 。",
+            "生": "生(ㄕㄥ) 日(ㄖˋ) 快(ㄎㄨㄞˋ) 樂(ㄌㄜˋ) 。",
+            "快": "生(ㄕㄥ) 日(ㄖˋ) 快(ㄎㄨㄞˋ) 樂(ㄌㄜˋ) 。",
+            "樂": "生(ㄕㄥ) 日(ㄖˋ) 快(ㄎㄨㄞˋ) 樂(ㄌㄜˋ) 。",
+            "牽": "爸(ㄅㄚˋ) 爸(ㄅㄚˋ) 牽(ㄑㄧㄢ) 著(ㄓㄜ˙) 我(ㄨㄛˇ) 的(ㄉㄜ˙) 手(ㄕㄡˇ) 。",
+            "路": "走(ㄗㄡˇ) 了(ㄌㄜ˙) 好(ㄏㄠˇ) 長(ㄔㄤˊ) 一(ㄧˋ) 段(ㄉㄨㄢˋ) 路(ㄌㄨˋ) 。",
 
-            // 第六課
             "封": "我(ㄨㄛˇ) 寫(ㄒㄧㄝˇ) 了(ㄌㄜ˙) 這(ㄓㄜˋ) 封(ㄈㄥ) 信(ㄒㄧㄣ) 給(ㄍㄟˇ) 你(ㄋㄧˇ) 。",
             "貴": "謝(ㄒㄧㄝˋ) 謝(ㄒㄧㄝˋ) 你(ㄋㄧˇ) ， 送(ㄙㄨㄥˋ) 給(ㄍㄟˇ) 我(ㄨㄛˇ) 們(ㄇㄣˊ) 許(ㄒㄩˇ) 多(ㄉㄨㄛ) 寶(ㄅㄠˇ) 貴(ㄍㄨㄟˋ) 的(ㄉㄜ˙) 禮(ㄌㄧˇ) 物(ㄨˋ) 。",
             "蝦": "海(ㄏㄞˇ) 裡(ㄌㄧˇ) 有(ㄧㄡˇ) 可(ㄎㄜˇ) 愛(ㄞˋ) 的(ㄉㄜ˙) 魚(ㄩˊ) 蝦(ㄒㄧㄚ) 。",
@@ -514,8 +553,11 @@
             "具": "我(ㄨㄛˇ) 決(ㄐㄩㄝˊ) 定(ㄉㄧㄥˋ) 以(ㄧˇ) 後(ㄏㄡˋ) 要(ㄧㄠˋ) 自(ㄗˋ) 己(ㄐㄧˇ) 帶(ㄉㄞˋ) 餐(ㄘㄢ) 具(ㄐㄩˋ) 。",
             "資": "做(ㄗㄨㄛˋ) 好(ㄏㄠˇ) 資(ㄗ) 源(ㄩㄢˊ) 回(ㄏㄨㄟˊ) 收(ㄕㄡ) 。",
             "源": "做(ㄗㄨㄛˋ) 好(ㄏㄠˇ) 資(ㄗ) 源(ㄩㄢˊ) 回(ㄏㄨㄟˊ) 收(ㄕㄡ) 。",
+            "信": "我(ㄨㄛˇ) 寫(ㄒㄧㄝˇ) 了(ㄌㄜ˙) 這(ㄓㄜˋ) 封(ㄈㄥ) 信(ㄒㄧㄣ) 給(ㄍㄟˇ) 你(ㄋㄧˇ) 。",
+            "魚": "海(ㄏㄞˇ) 裡(ㄌㄧˇ) 有(ㄧㄡˇ) 可(ㄎㄜˇ) 愛(ㄞˋ) 的(ㄉㄜ˙) 魚(ㄩˊ) 蝦(ㄒㄧㄚ) 。",
+            "物": "讓(ㄖㄤˋ) 所(ㄙㄨㄛˇ) 有(ㄧㄡˇ) 動(ㄉㄨㄥˋ) 植(ㄓˊ) 物(ㄨˋ) 都(ㄉㄡ) 可(ㄎㄜˇ) 以(ㄧˇ) 快(ㄎㄨㄞˋ) 樂(ㄌㄜˋ) 生(ㄕㄥ) 活(ㄏㄨㄛˊ) 。",
+            "收": "做(ㄗㄨㄛˋ) 好(ㄏㄠˇ) 資(ㄗ) 源(ㄩㄢˊ) 回(ㄏㄨㄟˊ) 收(ㄕㄡ) 。",
 
-            // 第七課
             "暗": "烏(ㄨ) 雲(ㄩㄣˊ) 來(ㄌㄞˊ) ， 天(ㄊㄧㄢ) 色(ㄙㄜˋ) 暗(ㄢˋ) 。",
             "猜": "我(ㄨㄛˇ) 跟(ㄍㄣ) 爺(ㄧㄝˊ) 爺(ㄧㄝˊ) 玩(ㄨㄢˊ) 猜(ㄘㄞ) 字(ㄗˋ) 。",
             "字": "我(ㄨㄛˇ) 跟(ㄍㄣ) 爺(ㄧㄝˊ) 爺(ㄧㄝˊ) 玩(ㄨㄢˊ) 猜(ㄘㄞ) 字(ㄗˋ) 。",
@@ -523,23 +565,29 @@
             "屋": "撐(ㄔㄥ) 開(ㄎㄞ) 來(ㄌㄞˊ) ， 是(ㄕˋ) 小(ㄒㄧㄠˇ) 屋(ㄨ) 頂(ㄉㄧㄥˇ) 。",
             "頂": "撐(ㄔㄥ) 開(ㄎㄞ) 來(ㄌㄞˊ) ， 是(ㄕˋ) 小(ㄒㄧㄠˇ) 屋(ㄨ) 頂(ㄉㄧㄥˇ) 。",
             "枴": "合(ㄏㄜˊ) 起(ㄑㄧˇ) 來(ㄌㄞˊ) ， 是(ㄕˋ) 小(ㄒㄧㄠˇ) 枴(ㄍㄨㄞˇ) 杖(ㄓㄤˋ) 。",
-            "杖": "合(ㄏㄜˊ) 起(ㄑㄧˇ) 來(ㄌㄞˊ) ， 是(ㄕˋ) 小(ㄒㄧㄠˇ) 枴(ㄍㄨㄞˇ) 杖(ㄓㄤˋ) 。",
+            "杖": "合(ㄏㄜˊ) 起(ㄑㄧˇ) 來(ㄌㄞˊ) ， 是(ㄕˋ) 小(ㄒㄧˇ) 枴(ㄍㄨㄞˇ) 杖(ㄓㄤˋ) 。",
             "滴": "雨(ㄩˇ) 滴(ㄉㄧ) 聽(ㄊㄧㄥ) 見(ㄐㄧㄢˋ) 了(ㄌㄜ˙) ， 滴(ㄉㄧ) 滴(ㄉㄧ) 答(ㄉㄚˊ) 答(ㄉㄚˊ) ！",
             "答": "雨(ㄩˇ) 滴(ㄉㄧ) 聽(ㄊㄧㄥ) 見(ㄐㄧㄢˋ) 了(ㄌㄜ˙) ， 滴(ㄉㄧ) 滴(ㄉㄧ) 答(ㄉㄚˊ) 答(ㄉㄚˊ) ！",
+            "天": "烏(烏) 雲(ㄩㄣˊ) 散(ㄙㄢˋ) 去(ㄑㄩˋ) ， 看(ㄎㄢˋ) 見(ㄐㄧㄢˋ) 藍(ㄌㄢˊ) 天(ㄊㄧㄢ) 。",
+            "合": "合(ㄏㄜˊ) 起(ㄑㄧˇ) 來(ㄌㄞˊ) ， 是(ㄕˋ) 小(ㄒㄧㄠˇ) 枴(ㄍㄨㄞˇ) 杖(ㄓㄤˋ) 。",
 
-            // 第八課
             "丁": "這(ㄓㄜˋ) 篇(ㄆㄧㄢ) 課(ㄎㄜˋ) 文(ㄨㄣˊ) 是(ㄕˋ) 老(ㄌㄠˇ) 園(ㄩㄢˊ) 丁(ㄉㄧㄥ) 的(ㄉㄜ˙) 話(ㄏㄨㄚˋ) 。",
             "認": "我(ㄨㄛˇ) 們(ㄇㄣˊ) 認(ㄖㄣˋ) 識(ㄕˋ) 了(ㄌㄜ˙) 許(ㄒㄩˇ) 多(ㄉㄨㄛ) 植(ㄓˊ) 物(ㄨˋ) 。",
             "客": "大(ㄉㄚˋ) 家(ㄐㄧㄚ) 都(ㄉㄡ) 是(ㄕˋ) 大(ㄉㄚˋ) 自(ㄗˋ) 然(ㄖㄢˊ) 的(ㄉㄜ˙) 賓(ㄅㄧㄣ) 客(ㄎㄜˋ) 。",
-            "興": "鳥(ㄋㄧㄠˇ) 兒(ㄦ) 高(ㄍㄠ) 興(ㄒㄧㄥˋ) 的(ㄉㄜ˙) 歌(ㄍㄜ) 唱(ㄔㄤˋ) 。",
+            "興": "鳥(ㄋㄧㄠˇ) 兒(ㄦ) 高(ㄍㄠ) 興(ㄒㄧㄥˋ) 的(ㄉㄜ˙) 歌(ㄍㄜ) 唱(ㄔˋ) 。",
             "照": "認(ㄖㄣˋ) 真(ㄓㄣ) 照(ㄓㄠˋ) 顧(ㄍㄨˋ) 這(ㄓㄜˋ) 些(ㄒㄧㄝ) 花(ㄏㄨㄚ) 草(ㄘㄠˇ) 。",
             "皮": "請(ㄑㄧㄥˇ) 不(ㄅㄨˋ) 要(ㄧㄠˋ) 當(ㄉㄤ) 頑(ㄨㄢˊ) 皮(ㄆㄧˊ) 的(ㄉㄜ˙) 小(ㄒㄧㄠˇ) 狗(ㄍㄡˇ) 。",
             "摘": "請(ㄑㄧㄥˇ) 不(ㄅㄨˋ) 要(ㄧㄠˋ) 摘(ㄓㄞ) 花(ㄏㄨㄚ) 。",
             "位": "這(ㄓㄜˋ) 位(ㄨㄟˋ) 是(ㄕˋ) 老(ㄌㄠˇ) 園(ㄩㄢˊ) 丁(ㄉㄧㄥ) 。",
             "牌": "看(ㄎㄢˋ) 看(ㄎㄢˋ) 上(ㄕㄤˋ) 面(ㄇㄧㄢˋ) 的(ㄉㄜ˙) 牌(ㄆㄞˊ) 子(ㄗˇ) 。",
             "欣": "欣(ㄒㄧㄣ) 賞(ㄕㄤˇ) 美(ㄇㄟˇ) 麗(ㄌㄧˋ) 的(ㄉㄜ˙) 風(ㄈㄥ) 景(ㄐㄧㄥ) 。",
+            "園": "這(ㄓㄜˋ) 篇(ㄆㄧㄢ) 課(ㄎㄜˋ) 文(ㄨㄣˊ) 是(ㄕˋ) 老(ㄌㄠˇ) 園(ㄩㄢˊ) 丁(ㄉㄧㄥ) 的(ㄉㄜ˙) 話(ㄏㄨㄚˋ) 。",
+            "話": "這(ㄓㄜˋ) 篇(ㄆㄧㄢ) 課(ㄎㄜˋ) 文(ㄨㄣˊ) 是(ㄕˋ) 老(ㄌㄠˇ) 園(ㄩㄢˊ) 丁(ㄉㄧㄥ) 的(ㄉㄜ˙) 話(ㄏㄨㄚˋ) 。",
+            "識": "我(ㄨㄛˇ) 們(ㄇㄣˊ) 認(ㄖㄣˋ) 識(ㄕˋ) 了(ㄌㄜ˙) 許(ㄒㄩˇ) 多(ㄉㄨㄛ) 植(ㄓˊ) 物(ㄨˋ) 。",
+            "賓": "大(ㄉㄚˋ) 家(ㄐㄧㄚ) 都(ㄉㄡ) 是(ㄕˋ) 大(ㄉㄚˋ) 自(ㄗˋ) 然(ㄖˊ) 的(ㄉㄜ˙) 賓(ㄅㄧㄣ) 客(ㄎㄜˋ) 。",
+            "頑": "請(ㄑㄧㄥˇ) 不(ㄅㄨˋ) 要(ㄧㄠˋ) 當(ㄉㄤ) 頑(ㄨㄢˊ) 皮(ㄆㄧˊ) 的(ㄉㄜ˙) 小(ㄒㄧㄠˇ) 狗(ㄍㄡˇ) 。",
+            "狗": "請(ㄑㄧㄥˇ) 不(ㄅㄨˋ) 要(ㄧㄠˋ) 當(ㄉㄤ) 頑(ㄨㄢˊ) 皮(ㄆㄧˊ) 的(ㄉㄜ˙) 小(ㄒㄧㄠˇ) 狗(ㄍㄡˇ) 。",
 
-            // 第九課
             "排": "小(ㄒㄧㄠˇ) 說(ㄕㄨㄛ) 書(ㄕㄨ) 人(ㄖㄣˊ) 上(ㄕㄤˋ) 台(ㄊㄞˊ) 排(ㄆㄞˊ) 隊(ㄉㄨㄟˋ) 。",
             "紹": "向(ㄒㄧㄤˋ) 大(ㄉㄚˋ) 家(ㄐㄧㄚ) 介(ㄐㄧㄝˋ) 紹(ㄕㄠˋ) 精(ㄐㄧㄥ) 彩(ㄘㄞˇ) 的(ㄉㄜ˙) 故(ㄍㄨˋ) 事(ㄕˋ) 。",
             "其": "其(ㄑㄧˊ) 他(ㄊㄚ) 人(ㄖㄣˊ) 認(ㄖㄣˋ) 真(ㄓㄣ) 聽(ㄊㄧㄥ) 。",
@@ -550,8 +598,12 @@
             "學": "小(ㄒㄧㄠˇ) 猴(ㄏㄡˊ) 子(ㄗ˙) 學(ㄒㄩㄝˊ) 老(ㄌㄠˇ) 闆(ㄅㄢˇ) 抓(ㄓㄨㄚ) 頭(ㄊㄡˊ) 。",
             "猴": "小(ㄒㄧㄠˇ) 猴(ㄏㄡˊ) 子(ㄗ˙) 學(ㄒㄩㄝˊ) 老(ㄌㄠˇ) 闆(ㄅㄢˇ) 抓(ㄓㄨㄚ) 頭(ㄊㄡˊ) 。",
             "息": "老(ㄌㄠˇ) 闆(ㄅㄢˇ) 在(ㄗㄞˋ) 樹(ㄕㄨˋ) 下(ㄒㄧㄚˋ) 休(ㄒㄧㄡ) 息(ㄒㄧˊ) 。",
+            "介": "向(ㄒㄧㄤˋ) 大(ㄉㄚˋ) 家(ㄐㄧㄚ) 介(ㄐㄧㄝˋ) 紹(ㄕㄠˋ) 精(ㄐㄧㄥ) 彩(ㄘㄞˇ) 的(ㄉㄜ˙) 故(ㄍㄨˋ) 事(ㄕˋ) 。",
+            "精": "向(ㄒㄧㄤˋ) 大(ㄉㄚˋ) 家(ㄐㄧㄚ) 介(ㄐㄧㄝˋ) 紹(ㄕㄠˋ) 精(ㄐㄧㄥ) 彩(ㄘㄞˇ) 的(ㄉㄜ˙) 故(ㄍㄨˋ) 事(ㄕˋ) 。",
+            "彩": "向(ㄒㄧㄤˋ) 大(ㄉㄚˋ) 家(ㄐㄧㄚ) 介(ㄐㄧㄝˋ) 紹(ㄕㄠˋ) 精(ㄐㄧㄥ) 彩(ㄘㄞˇ) 的(ㄉㄜ˙) 故(ㄍㄨˋ) 事(ㄕˋ) 。",
+            "戴": "他(ㄊㄚ) 頭(ㄊㄡˊ) 上(ㄕㄤˋ) 戴(ㄉㄞˋ) 著(ㄓㄜ˙) 一(ㄧˋ) 頂(ㄉㄧㄥˇ) 紅(ㄏㄨㄥˊ) 帽(ㄇㄠˋ) 子(ㄗ˙) 。",
+            "紅": "他(ㄊㄚ) 頭(ㄊㄡˊ) 上(ㄕㄤˋ) 戴(ㄉㄞˋ) 著(ㄓㄜ˙) 一(ㄧˋ) 頂(ㄉㄧㄥˇ) 紅(ㄏㄨㄥˊ) 帽(ㄇㄠˋ) 子(ㄗ˙) 。",
 
-            // 第十課
             "術": "國(ㄍㄨㄛˊ) 王(ㄨㄤˊ) 喜(ㄒㄧˇ) 歡(ㄏㄨㄢ) 點(ㄉㄧㄢˇ) 金(ㄐㄧㄣ) 術(ㄕㄨˋ) 的(ㄉㄜ˙) 魔(ㄇㄛˊ) 法(ㄈㄚˇ) 。",
             "銀": "亮(ㄌㄧㄤˋ) 晶(ㄐㄧㄥ) 晶(ㄐㄧㄥ) 的(ㄉㄜ˙) 金(ㄐㄧㄣ) 銀(ㄧㄣˊ) 珠(ㄓㄨ) 寶(ㄅㄠˇ) 。",
             "珠": "亮(ㄌㄧㄤˋ) 晶(ㄐㄧㄥ) 晶(ㄐㄧㄥ) 的(ㄉㄜ˙) 金(ㄐㄧㄣ) 銀(ㄧㄣˊ) 珠(ㄓㄨ) 寶(ㄅㄠˇ) 。",
@@ -562,8 +614,12 @@
             "慌": "國(ㄍㄨㄛˊ) 王(ㄨㄤˊ) 心(ㄒㄧㄣ) 裡(ㄌㄧˇ) 感(ㄍㄢˇ) 到(ㄉㄠˋ) 很(ㄏㄣˇ) 慌(ㄏㄨㄤ) 張(ㄓㄤ) 。",
             "純": "女(ㄋㄩˇ) 兒(ㄦˊ) 有(ㄧㄡˇ) 一(ㄧˋ) 顆(ㄎㄜ) 純(ㄔㄨㄣˊ) 潔(ㄐㄧㄝˊ) 的(ㄉㄜ˙) 心(ㄒㄧㄣ) 。",
             "狀": "這(ㄓㄜˋ) 種(ㄓㄨㄥˇ) 形(ㄒㄧㄥˊ) 狀(ㄓㄨㄤˋ) 很(ㄏㄣˇ) 特(ㄊㄜˋ) 別(ㄅㄧㄝˊ) 。",
+            "國": "國(ㄍㄨㄛˊ) 王(ㄨㄤˊ) 喜(ㄒㄧˇ) 歡(ㄏㄨㄢ) 點(ㄉㄧㄢˇ) 金(ㄐㄧㄣ) 術(ㄕㄨˋ) 的(ㄉㄜ˙) 魔(ㄇㄛˊ) 法(ㄈㄚˇ) 。",
+            "王": "國(ㄍㄨㄛˊ) 王(ㄨㄤˊ) 喜(ㄒㄧˇ) 歡(ㄏㄨㄢ) 點(ㄉㄧㄢˇ) 金(ㄐㄧㄣ) 術(ㄕㄨˋ) 的(ㄉㄜ˙) 魔(ㄇㄛˊ) 法(ㄈㄚˇ) 。",
+            "魔": "國(ㄍㄨㄛˊ) 王(ㄨㄤˊ) 喜(ㄒㄧˇ) 歡(ㄏㄨㄢ) 點(ㄉㄧㄢˇ) 金(ㄐㄧㄣ) 術(ㄕㄨˋ) 的(ㄉㄜ˙) 魔(ㄇㄛˊ) 法(ㄈㄚˇ) 。",
+            "法": "國(ㄍㄨㄛˊ) 王(ㄨㄤˊ) 喜(ㄒㄧˇ) 歡(ㄏㄨㄢ) 點(ㄉㄧㄢˇ) 金(ㄐㄧㄣ) 術(ㄕㄨˋ) 的(ㄉㄜ˙) 魔(ㄇㄛˊ) 法(ㄈㄚˇ) 。",
+            "金": "國(ㄍㄨㄛˊ) 王(ㄨㄤˊ) 喜(ㄒㄧˇ) 歡(ㄏㄨㄢ) 點(ㄉㄧㄢˇ) 金(ㄐㄧㄣ) 術(ㄕㄨˋ) 的(ㄉㄜ˙) 魔(ㄇㄛˊ) 法(ㄈㄚˇ) 。",
 
-            // 第十一課
             "敗": "我(ㄨㄛˇ) 失(ㄕ) 敗(ㄅㄞˋ) 時(ㄕˊ) ， 你(ㄋㄧˇ) 會(ㄏㄨㄟˋ) 鼓(ㄍㄨˇ) 勵(ㄌㄧˋ) 我(ㄨㄛˇ) 重(ㄔㄨㄥˊ) 新(ㄒㄧㄣ) 站(ㄓㄢˋ) 起(ㄑㄧˇ) 來(ㄌㄞˊ) 。",
             "操": "我(ㄨㄛˇ) 們(ㄇㄣˊ) 會(ㄏㄨㄟˋ) 一(ㄧˋ) 起(ㄑㄧˇ) 到(ㄉㄠˋ) 操(ㄘㄠ) 場(ㄔㄤˇ) 旁(ㄆㄤˊ) 。",
             "脖": "伸(ㄕㄣ) 長(ㄔㄤˊ) 脖(ㄅㄛˊ) 子(ㄗ˙) ， 瞇(ㄇㄧ) 著(ㄓㄜ˙) 眼(ㄧㄢˇ) 睛(ㄐㄧㄥ) 。",
@@ -574,19 +630,86 @@
             "彈": "看(ㄎㄢˋ) 我(ㄨㄛˇ) 讀(ㄉㄨˊ) 書(ㄕㄨ) 、 唱(ㄔㄤˋ) 歌(ㄍㄜ) 、 練(ㄌㄧㄢˋ) 習(ㄒㄧˊ) 彈(ㄊㄢˊ) 琴(ㄑㄧㄣˊ) 。",
             "練": "看(ㄎㄢˋ) 我(ㄨㄛˇ) 讀(ㄉㄨˊ) 書(ㄕㄨ) 、 唱(ㄔㄤˋ) 歌(ㄍㄜ) 、 練(ㄌㄧㄢˋ) 習(ㄒㄧˊ) 彈(ㄊㄢˊ) 琴(ㄑㄧㄣˊ) 。",
             "習": "看(ㄎㄢˋ) 我(ㄨㄛˇ) 讀(ㄉㄨˊ) 書(ㄕㄨ) 、 唱(ㄔㄤˋ) 歌(ㄍㄜ) 、 練(ㄌㄧㄢˋ) 習(ㄒㄧˊ) 彈(ㄊㄢˊ) 琴(ㄑㄧㄣˊ) 。",
+            "喜": "我(ㄨㄛˇ) 喜(ㄒㄧˇ) 歡(ㄏㄨㄢ) 你(ㄋㄧˇ) 。",
+            "歡": "我(ㄨㄛˇ) 喜(ㄒㄧˇ) 歡(ㄏㄨㄢ) 你(ㄋㄧˇ) 。",
+            "鼓": "你(ㄋㄧˇ) 會(ㄏㄨㄟˋ) 鼓(ㄍㄨˇ) 勵(ㄌㄧˋ) 我(ㄨㄛˇ) 重(ㄔㄨㄥˊ) 新(ㄒㄧㄣ) 站(ㄓㄢˋ) 起(ㄑㄧˇ) 來(ㄌㄞˊ) 。",
+            "勵": "你(ㄋㄧˇ) 會(ㄏㄨㄟˋ) 鼓(ㄍㄨˇ) 勵(ㄌㄧˋ) 我(ㄨㄛˇ) 重(ㄔㄨㄥˊ) 新(ㄒㄧㄣ) 站(ㄓㄢˋ) 起(ㄑㄧˇ) 來(ㄌㄞˊ) 。",
+            "旁": "我(ㄨㄛˇ) 們(ㄇㄣˊ) 會(ㄏㄨㄟˋ) 一(ㄧˋ) 起(ㄑㄧˇ) 到(ㄉㄠˋ) 操(ㄘㄠ) 場(ㄔㄤˇ) 旁(ㄆㄤˊ) 。",
 
-            // 第十二課
             "牆": "那(ㄋㄚˋ) 是(ㄕˋ) 一(ㄧˋ) 間(ㄐㄧㄢ) 有(ㄧㄡˇ) 牆(ㄑㄧㄤˊ) 壁(ㄅㄧˋ) 、 門(ㄇㄣˊ) 窗(ㄔㄨㄤ) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 。",
             "壁": "那(ㄋㄚˋ) 是(ㄕˋ) 一(ㄧˋ) 間(ㄐㄧㄢ) 有(ㄧㄡˇ) 牆(ㄑㄧㄤˊ) 壁(ㄅㄧˋ) 、 門(ㄇㄣˊ) 窗(ㄔㄨㄤ) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 。",
             "窗": "那(ㄋㄚˋ) 是(ㄕˋ) 一(ㄧˋ) 間(ㄐㄧㄢ) 有(ㄧㄡˇ) 牆(ㄑㄧㄤˊ) 壁(ㄅㄧˋ) 、 門(ㄇㄣˊ) 窗(ㄔㄨㄤ) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 。",
             "鋪": "有(ㄧㄡˇ) 床(ㄔㄨㄤˊ) 鋪(ㄆㄨ) 、 桌(ㄓㄨㄛ) 子(ㄗ˙) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 。",
-            "輪": "如(ㄖㄨˊ) 果(ㄍㄨㄛˇ) 我(ㄨㄛˇ) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 有(ㄧㄡˇ) 四(ㄙˋ) 個(ㄍㄜ˙) 輪(ㄌㄨㄣˊ) 子(ㄗ˙) 。",
+            "輪": "如(ㄖㄨˊ) 果(ㄍㄨㄛˇ) 我(ㄨㄛˇ) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 有(ㄧˇ) 四(ㄙˋ) 個(ㄍㄜ˙) 輪(ㄌㄨㄣˊ) 子(ㄗ˙) 。",
             "冰": "我(ㄨㄛˇ) 希(ㄒㄧ) 望(ㄨㄤˋ) 我(ㄨㄛˇ) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 是(ㄕˋ) 北(ㄅㄟˇ) 極(ㄐㄧˊ) 的(ㄉㄜ˙) 冰(ㄅㄧㄥ) 屋(ㄨ) 。",
             "且": "涼(ㄌㄧㄤˊ) 快(ㄎㄨㄞˋ) 得(ㄉㄜ˙) 不(ㄅㄨˋ) 得(ㄉㄜ˙) 了(ㄌㄧㄠˇ) ， 而(ㄦˊ) 且(ㄑㄧㄝˇ) 不(ㄅㄨˋ) 用(ㄩㄥˋ) 交(ㄐㄧㄠ) 電(ㄉㄧㄢˋ) 費(ㄈㄟˋ) 。",
             "刻": "立(ㄌㄧˋ) 刻(ㄎㄜˋ) 摘(ㄓㄞ) 下(ㄒㄧㄚˋ) 一(ㄧˋ) 顆(ㄎㄜ) 顆(ㄎㄜ) 新(ㄒㄧㄢ) 鮮(ㄒㄧㄢ) 的(ㄉㄜ˙) 果(ㄍㄨㄛˇ) 子(ㄗ˙) 。",
             "鮮": "立(ㄌㄧˋ) 刻(ㄎㄜˋ) 摘(ㄓㄞ) 下(ㄒㄧㄚˋ) 一(ㄧˋ) 顆(ㄎㄜ) 顆(ㄎㄜ) 新(ㄒㄧㄢ) 鮮(ㄒㄧㄢ) 的(ㄉㄜ˙) 果(ㄍㄨㄛˇ) 子(ㄗ˙) 。",
-            "汁": "新(ㄒㄧㄢ) 鮮(ㄒㄧㄢ) 又(ㄧㄡˋ) 甜(ㄊㄧㄢˊ) 美(ㄇㄟˇ) 多(ㄉㄨㄛ) 汁(ㄓ) 的(ㄉㄜ˙) 果(ㄍㄨㄛˇ) 子(ㄗ˙) 。"
+            "汁": "新(ㄒㄧㄢ) 鮮(ㄒㄧㄢ) 又(ㄧㄡˋ) 甜(ㄊㄧㄢˊ) 美(ㄇㄟˇ) 多(ㄉㄨㄛ) 汁(ㄓ) 的(ㄉㄜ˙) 果(ㄍㄨㄛˇ) 子(ㄗ˙) 。",
+            "房": "我(ㄨㄛˇ) 喜歡(ㄒㄧˇ ㄏㄨㄢ) 我(ㄨㄛˇ) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 。",
+            "床": "有(ㄧㄡˇ) 床(ㄔㄨㄤˊ) 鋪(ㄆㄨ) 、 桌(ㄓㄨㄛ) 子(ㄗ˙) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 。",
+            "桌": "有(ㄧㄡˇ) 床(ㄔㄨㄤˊ) 鋪(ㄆㄨ) 、 桌(ㄓㄨㄛ) 子(ㄗ˙) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 。",
+            "玩": "有(ㄧㄡˇ) 玩(ㄨㄢˊ) 具(ㄐㄩˋ) 和(ㄏㄢˋ) 書(ㄕㄨ) 本(ㄅㄣˇ) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 。",
+            "夏": "夏(ㄒㄧㄚˋ) 天(ㄊㄧㄢ) ， 我(ㄨㄛˇ) 希(ㄒㄧ) 望(ㄨㄤˋ) 我(ㄨㄛˇ) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 是(ㄕˋ) 北(ㄅㄟˇ) 極(ㄐㄧˊ) 的(ㄉㄜ˙) 冰(ㄅㄧㄥ) 屋(ㄨ) 。",
+            "北": "我(ㄨㄛˇ) 希(ㄒㄧ) 望(ㄨㄤˋ) 我(ㄨㄛˇ) 的(ㄉㄜ˙) 房(ㄈㄤˊ) 間(ㄐㄧㄢ) 是(ㄕˋ) 北(ㄅㄟˇ) 極(ㄐㄧˊ) 的(ㄉㄜ˙) 冰(ㄅㄧㄥ) 屋(ㄨ) 。"
         };
+
+        // 標準鍵盤布局資料（依大千/標準注音鍵盤對應）
+        const bopomofoKeyboardLayout = [
+            // 第一排 (對應數字排 1 ~ -)
+            [
+                { char: "ㄅ", key: "1" },
+                { char: "ㄉ", key: "2" },
+                { char: "ˇ", key: "3" },
+                { char: "ˋ", key: "4" },
+                { char: "ㄓ", key: "5" },
+                { char: "ˊ", key: "6" },
+                { char: "˙", key: "7" },
+                { char: "ㄚ", key: "8" },
+                { char: "ㄞ", key: "9" },
+                { char: "ㄢ", key: "0" },
+                { char: "ㄦ", key: "-" }
+            ],
+            // 第二排 (對應字母排 q ~ p)
+            [
+                { char: "ㄆ", key: "q" },
+                { char: "ㄊ", key: "w" },
+                { char: "ㄍ", key: "e" },
+                { char: "ㄐ", key: "r" },
+                { char: "ㄔ", key: "t" },
+                { char: "ㄗ", key: "y" },
+                { char: "ㄧ", key: "u" },
+                { char: "ㄛ", key: "i" },
+                { char: "ㄟ", key: "o" },
+                { char: "ㄣ", key: "p" }
+            ],
+            // 第三排 (對應字母排 a ~ ;)
+            [
+                { char: "ㄇ", key: "a" },
+                { char: "ㄋ", key: "s" },
+                { char: "ㄎ", key: "d" },
+                { char: "ㄑ", key: "f" },
+                { char: "ㄕ", key: "g" },
+                { char: "ㄘ", key: "h" },
+                { char: "ㄨ", key: "j" },
+                { char: "ㄜ", key: "k" },
+                { char: "ㄠ", key: "l" },
+                { char: "ㄤ", key: ";" }
+            ],
+            // 第四排 (對應字母排 z ~ /)
+            [
+                { char: "ㄈ", key: "z" },
+                { char: "ㄌ", key: "x" },
+                { char: "ㄏ", key: "c" },
+                { char: "ㄒ", key: "v" },
+                { char: "ㄖ", key: "b" },
+                { char: "ㄙ", key: "n" },
+                { char: "ㄩ", key: "m" },
+                { char: "ㄝ", key: "," },
+                { char: "ㄡ", key: "." },
+                { char: "ㄥ", key: "/" }
+            ]
+        ];
 
         const keyMap = {
             '1':'ㄅ', 'q':'ㄆ', 'a':'ㄇ', 'z':'ㄈ', '2':'ㄉ', 'w':'ㄊ', 's':'ㄋ', 'x':'ㄌ', 'e':'ㄍ', 'd':'ㄎ', 'c':'ㄏ', 'r':'ㄐ', 'f':'ㄑ', 'v':'ㄒ',
@@ -594,10 +717,6 @@
             '8':'ㄚ', 'i':'ㄛ', 'k':'ㄜ', ',':'ㄝ', '9':'ㄞ', 'o':'ㄟ', 'l':'ㄠ', '.':'ㄡ', '0':'ㄢ', 'p':'ㄣ', ';':'ㄤ', '/':'ㄥ', '-':'ㄦ',
             '6':'ˊ', '3':'ˇ', '4':'ˋ', '7':'˙', ' ':'ˉ', 'Space':'ˉ', 'Enter':'ˉ'
         };
-
-        const kbInitials = ["ㄅ","ㄆ","ㄇ","ㄈ","ㄉ","ㄊ","ㄋ","ㄌ","ㄍ","ㄎ","ㄏ","ㄐ","ㄑ","ㄒ","ㄓ","ㄔ","ㄕ","ㄖ","ㄗ","ㄘ","ㄙ"];
-        const kbMedialsAndFinals = ["ㄧ","ㄨ","ㄩ","ㄚ","ㄛ","ㄜ","ㄝ","ㄞ","ㄟ","ㄠ","ㄡ","ㄢ","ㄣ","ㄤ","ㄥ","ㄦ"];
-        const kbTones = ["ˉ","ˊ","ˇ","ˋ","˙"];
 
         let state = {
             currentLessonId: null,
@@ -795,9 +914,20 @@
                 document.getElementById('lesson-title').innerText = lessonData.title;
             }
             
+            // 隨機篩選 10 個生字，確保不重複遊玩時字元不重樣
             allWordsList.sort(() => Math.random() - 0.5);
-            state.testWords = allWordsList.slice(0, 10);
             
+            const uniqueSelected = [];
+            const seenWords = new Set();
+            for (let item of allWordsList) {
+                if (!seenWords.has(item.word)) {
+                    seenWords.add(item.word);
+                    uniqueSelected.push(item);
+                }
+                if (uniqueSelected.length === 10) break;
+            }
+
+            state.testWords = uniqueSelected;
             state.currentWordIndex = 0;
             state.quizCompleted = 0;
             state.piecesPlaced = 0;
@@ -815,8 +945,8 @@
             document.getElementById('quiz-finished-msg').classList.add('hidden');
             
             const emptyMsg = document.getElementById('inventory-empty-msg');
-            if (emptyMsg) emptyMsg.style.display = 'block';
-            document.getElementById('inventory-area').innerHTML = '<span class="text-gray-400 font-medium text-xs" id="inventory-empty-msg">答對生字後，拼圖卡就會飛到這裡喔！</span>';
+            if (emptyMsg) emptyMsg.style.display = 'none';
+            document.getElementById('inventory-area').innerHTML = '';
 
             updateProgress();
             setupPuzzleBoard(lessonId);
@@ -1122,7 +1252,7 @@
 
                     if (char === targetWord) {
                         const targetWordSpan = document.createElement('span');
-                        targetWordSpan.className = "text-xl mx-2 bg-fuchsia-100 rounded-lg px-2.5 py-1 border-2 border-fuchsia-200 shadow-sm inline-flex items-center align-middle transform transition-all animate-pulse";
+                        targetWordSpan.className = "text-sm mx-1.5 bg-fuchsia-100 rounded-lg px-2 py-0.5 border-2 border-fuchsia-200 shadow-sm inline-flex items-center align-middle font-black text-fuchsia-700 animate-pulse";
                         targetWordSpan.innerText = char;
                         container.appendChild(targetWordSpan);
                     } else {
@@ -1130,7 +1260,7 @@
                         wordDiv.className = "word-with-zhuyin";
 
                         const charSpan = document.createElement('span');
-                        charSpan.className = "font-biaukai text-lg text-gray-800 leading-none align-middle";
+                        charSpan.className = "font-biaukai text-sm text-gray-800 leading-none align-middle";
                         charSpan.innerText = char;
                         wordDiv.appendChild(charSpan);
 
@@ -1179,7 +1309,7 @@
                 } else if (match[3]) {
                     const rawText = match[3];
                     const rawSpan = document.createElement('span');
-                    rawSpan.className = "font-biaukai text-lg text-gray-400 mx-1 leading-none align-middle select-none";
+                    rawSpan.className = "font-biaukai text-sm text-gray-400 mx-0.5 leading-none align-middle select-none";
                     rawSpan.innerText = rawText;
                     container.appendChild(rawSpan);
                 }
@@ -1208,19 +1338,6 @@
             }
             
             parseAndRenderSentence(sentence, currentObj.word);
-            
-            const imgEl = document.getElementById('example-image');
-            imgEl.style.opacity = '0';
-            document.getElementById('example-loading').style.display = 'block';
-            
-            const seed = currentObj.word.charCodeAt(0) * 88; 
-            const imgPrompt = encodeURIComponent(`fairytale princess magical forest, simple watercolor vector, children book style`);
-            imgEl.src = `https://image.pollinations.ai/prompt/${imgPrompt}?width=120&height=120&nologo=true&seed=${seed}`;
-            imgEl.onload = () => {
-                imgEl.classList.add('example-img-loaded');
-                imgEl.style.opacity = '1';
-                document.getElementById('example-loading').style.display = 'none';
-            };
             
             state.expectedSequence = getExpectedSequence(currentObj.zhuyin);
             state.typedSequence = [];
@@ -1268,38 +1385,124 @@
             }
         }
 
+        // 動態生成電腦標準鍵盤 (ㄅ ~ ㄦ)
         function buildVirtualKeyboard() {
-            const initContainer = document.getElementById('keyboard-initials');
-            const finalsContainer = document.getElementById('keyboard-finals');
-            const tonesContainer = document.getElementById('keyboard-tones');
+            const kbContainer = document.getElementById('standard-keyboard-grid');
+            kbContainer.innerHTML = '';
+
+            // 第一至第四排字母符號按鍵
+            bopomofoKeyboardLayout.forEach((row, rowIndex) => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = `grid gap-1 w-full`;
+                
+                // 動態設定格數配置
+                if (rowIndex === 0) {
+                    rowDiv.classList.add('grid-cols-11');
+                } else {
+                    rowDiv.classList.add('grid-cols-10');
+                }
+
+                row.forEach(keyObj => {
+                    const btn = document.createElement('button');
+                    btn.className = "key-btn py-2.5 rounded-lg text-sm font-black bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 active:scale-90 select-none flex flex-col items-center justify-center relative shadow-sm h-12";
+                    
+                    // 中央主字
+                    const charSpan = document.createElement('span');
+                    charSpan.innerText = keyObj.char;
+                    charSpan.className = "text-sm md:text-base font-black text-gray-800";
+
+                    // 右下角鍵盤對應提示
+                    const subSpan = document.createElement('span');
+                    subSpan.innerText = keyObj.key;
+                    subSpan.className = "absolute bottom-0.5 right-1 text-[8px] text-slate-400 font-bold uppercase";
+
+                    btn.appendChild(charSpan);
+                    btn.appendChild(subSpan);
+                    btn.onclick = () => handleInput(keyObj.char);
+                    rowDiv.appendChild(btn);
+                });
+
+                kbContainer.appendChild(rowDiv);
+            });
+
+            // 第五排特別控制按鍵 (空白一聲、刪除、隱藏)
+            const controlRow = document.createElement('div');
+            controlRow.className = "grid grid-cols-10 gap-1 w-full mt-1";
+
+            // 1. 刪除退格鍵
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = "col-span-3 key-btn rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-100 font-bold text-xs select-none flex items-center justify-center gap-1 h-11";
+            deleteBtn.innerHTML = "<i class='fa-solid fa-backspace'></i> <span>刪除</span>";
+            deleteBtn.onclick = () => handleBackspace();
+            controlRow.appendChild(deleteBtn);
+
+            // 2. 空白鍵一聲
+            const spaceBtn = document.createElement('button');
+            spaceBtn.className = "col-span-4 key-btn rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-black text-sm select-none flex items-center justify-center h-11 shadow-sm";
+            spaceBtn.innerHTML = "<span>空白 ˉ (一聲)</span>";
+            spaceBtn.onclick = () => handleInput('ˉ');
+            controlRow.appendChild(spaceBtn);
+
+            // 3. 收起隱藏鍵盤
+            const hideBtn = document.createElement('button');
+            hideBtn.className = "col-span-3 key-btn rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs select-none flex items-center justify-center gap-1 h-11";
+            hideBtn.innerHTML = "<i class='fa-solid fa-keyboard'></i> <span>收起</span>";
+            hideBtn.onclick = () => toggleMobileKeyboard(false);
+            controlRow.appendChild(hideBtn);
+
+            kbContainer.appendChild(controlRow);
+        }
+
+        // 退格刪除注音邏輯
+        function handleBackspace() {
+            if (state.typedSequence.length > 0) {
+                state.typedSequence.pop();
+                playSound('pop');
+                renderZhuyinSlots();
+            }
+        }
+
+        // 手機版滑動式鍵盤顯示控制器
+        function toggleMobileKeyboard(forceState) {
+            const keyboardContainer = document.getElementById('keyboard-container');
+            const overlay = document.getElementById('keyboard-mobile-overlay');
             
-            initContainer.innerHTML = '';
-            finalsContainer.innerHTML = '';
-            tonesContainer.innerHTML = '';
+            let isCurrentlyHidden = keyboardContainer.classList.contains('translate-y-full');
+            let targetState = isCurrentlyHidden; 
+            
+            if (typeof forceState === 'boolean') {
+                targetState = forceState;
+            }
+            
+            if (targetState) {
+                // 開啟鍵盤
+                keyboardContainer.classList.remove('translate-y-full');
+                keyboardContainer.classList.add('translate-y-0');
+                overlay.classList.remove('hidden');
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                    overlay.classList.add('opacity-100');
+                }, 50);
+            } else {
+                // 關閉鍵盤
+                keyboardContainer.classList.remove('translate-y-0');
+                keyboardContainer.classList.add('translate-y-full');
+                overlay.classList.remove('opacity-100');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => {
+                    if (keyboardContainer.classList.contains('translate-y-full')) {
+                        overlay.classList.add('hidden');
+                    }
+                }, 300);
+            }
+        }
 
-            kbInitials.forEach(char => {
-                const btn = document.createElement('button');
-                btn.className = "key-btn py-2.5 rounded-lg text-sm font-black bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 active:scale-90 select-none";
-                btn.innerText = char;
-                btn.onclick = () => handleInput(char);
-                initContainer.appendChild(btn);
-            });
-
-            kbMedialsAndFinals.forEach(char => {
-                const btn = document.createElement('button');
-                btn.className = "key-btn py-2.5 rounded-lg text-sm font-black bg-pink-50 hover:bg-pink-100 text-pink-700 border border-pink-200 active:scale-90 select-none";
-                btn.innerText = char;
-                btn.onclick = () => handleInput(char);
-                finalsContainer.appendChild(btn);
-            });
-
-            kbTones.forEach(char => {
-                const btn = document.createElement('button');
-                btn.className = "key-btn py-2.5 rounded-lg text-sm font-black bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 active:scale-90 select-none flex items-center justify-center";
-                btn.innerText = char === 'ˉ' ? '一聲' : char;
-                btn.onclick = () => handleInput(char);
-                tonesContainer.appendChild(btn);
-            });
+        // 手機玩可以點選特定區域（大字/輸入格）來召喚鍵盤的機制
+        function triggerMobileKeyboardInput() {
+            // 僅在手機模式 (畫面寬度小於 768px 或 md) 自動彈出
+            if (window.innerWidth < 1024) {
+                toggleMobileKeyboard(true);
+            }
         }
 
         function handleInput(char) {
@@ -1326,6 +1529,7 @@
             }
         }
 
+        // 實體鍵盤綁定
         window.addEventListener('keydown', (e) => {
             if (document.getElementById('game-screen').classList.contains('hidden') || 
                 !document.getElementById('completion-modal').classList.contains('hidden')) {
@@ -1336,6 +1540,10 @@
             if (e.code === 'Space' || e.key === ' ') {
                 inputChar = 'ˉ';
                 e.preventDefault();
+            } else if (e.key === 'Backspace') {
+                handleBackspace();
+                e.preventDefault();
+                return;
             }
             
             if (keyMap[inputChar.toLowerCase()]) {
@@ -1387,6 +1595,7 @@
             document.getElementById('completion-modal').classList.add('hidden');
             document.getElementById('game-screen').classList.add('hidden');
             document.getElementById('menu-screen').classList.remove('hidden');
+            toggleMobileKeyboard(false);
         }
 
         function replayLesson() {
